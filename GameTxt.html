@@ -1,0 +1,170 @@
+<!DOCTYPE html> 
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+<p id='data'> </p>
+<script>
+var canvas;
+var canvasContext;
+var ballX;
+var ballY;
+var ballVX = -10;
+var ballVY = 1;
+
+var paddle1Y = 250;
+var paddle2Y = 250;
+var botPaddleSpeed = 6;
+var score1 = 0;
+var score2 = 0;
+const PADDLE_HEIGHT = 100;
+const PADDLE_THICK = 10;
+
+function calculateMousePos(evt) {
+	var rect = canvas.getBoundingClientRect();
+	var root = document.documentElement;
+	var mouseX = evt.clientX - rect.left - root.scrollLeft;
+	var mouseY = evt.clientY - rect.top - root.scrollTop;
+	return {
+		x:mouseX,
+		y:mouseY
+	};
+}
+
+window.onload = function() {
+	canvas = document.getElementById('gameCanvas');
+	canvasContext = canvas.getContext('2d');
+	var data = document.getElementById('data');
+	drawCanvas();
+	ballX = canvas.width/2;
+	ballY = canvas.height/2;
+
+	var fps = 30;
+	setInterval(function() {
+		moveUpdate();
+		drawCanvas();
+	}, 1000/fps);
+	
+	canvas.addEventListener('mousemove', function(evt){
+		var mousePos = calculateMousePos(evt);
+		paddle1Y = mousePos.y-(PADDLE_HEIGHT/2);
+	}
+);
+}
+function moveUpdate(){
+	computerMovement();
+	
+	//ball X movement
+	ballX += ballVX;
+	if (ballX > canvas.width){
+		if (ballY > paddle2Y && ballY < paddle2Y+PADDLE_HEIGHT){ //ball bounce right side
+			ballVX *=-1;
+			if (ballVX > 0){
+				ballVX +=1;
+				}
+				else if (ballVX < 0){
+				ballVX -=1;
+				}
+				else{ballReset();}			
+				if (ballVY > 0){
+				ballVY +=1;
+				}
+				else if (ballVY < 0){
+				ballVY -=1;
+				}
+				else{ballReset();}
+			}
+		else{ballReset(1);} //miss right side
+	}
+	if (ballX < 0){
+		if (ballY > paddle1Y && ballY < paddle1Y+PADDLE_HEIGHT){ //ball bounce left side
+			ballVX *=-1;
+			if (ballVX > 0){
+				ballVX +=1;
+				}
+				else if (ballVX < 0){
+				ballVX -=1;
+				}
+				else{ballReset();}
+			if (ballVY > 0){
+				ballVY +=1;
+				}
+				else if (ballVY < 0){
+				ballVY -=1;
+				}
+				else{ballReset();}
+		}
+		else{ballReset(2);}//miss left side
+	}
+	//ball Y movement
+	ballY += ballVY;
+	if (ballY > canvas.height || ballY < 0){ //reverses velocity (ballVY) if ball leaves field
+		ballVY *= -1;
+	}
+	string = "BALLX"
+	data.innerHTML = "BALLX: " + ballX + " BALLY: " + ballY + " BALLVX: " + ballVX + " BALLVY: " + ballVY;
+	//create error checker here: ball moving, ball in field, in case of error always reset
+}
+function drawCanvas(){
+	colorRect(0,0,canvas.width,canvas.height,'black');
+	for(let i = 0; i<10; i++){ //Middle Lines
+		colorRect(canvas.width/2,15+(i*60),10,35,'white');
+	}
+	colorRect(0,paddle1Y,PADDLE_THICK,PADDLE_HEIGHT,'white');
+	colorRect(canvas.width-PADDLE_THICK,paddle2Y,PADDLE_THICK,PADDLE_HEIGHT,'white');
+	colorRect(ballX,ballY,10,10,'white');
+	colorCircle(ballX,ballY,10,'white'); //circle ball won't work :<\
+	canvasContext.fillText(score1,100,100);	
+	canvasContext.fillText(score2,canvas.width-100,100);
+}
+function ballReset(num){
+	ballVX *= -1;
+		if (ballVX > 0){
+			ballVX = 10;
+		}
+		else {
+			ballVX = -10;
+		}
+		if (ballVY > 0){
+			ballVY = 3;
+		}
+		else {
+			ballVY = -3;
+		}
+	ballX = canvas.width/2;
+	ballY = canvas.height/2;
+	if (num == 1){score2++;}
+	else if (num == 2){score1++;}
+	if (score1>=7){ //add win conditions later
+		
+	}
+	if (score2>7){
+		
+	}
+} 
+function computerMovement(){
+	if(paddle2Y+(PADDLE_HEIGHT/2) < ballY){
+		paddle2Y += botPaddleSpeed;
+	}
+	else if (paddle2Y+(PADDLE_HEIGHT/2) > ballY){
+		paddle2Y -= botPaddleSpeed;
+	}
+ /* Used to make 0-player mode
+	if(paddle1Y+(PADDLE_HEIGHT/2) < ballY){
+		paddle1Y += ballVY;
+	}
+	else if (paddle1Y+(PADDLE_HEIGHT/2) > ballY){
+		paddle1Y -= ballVY;
+	} */
+}
+
+function colorRect(leftX,topY,width,height,drawColor){
+	canvasContext.fillStyle = drawColor;
+	canvasContext.fillRect(leftX,topY,width,height);
+}
+function colorCircle(centerX, centerY, radius, drawColor){ //won't work, fix l8r
+	//draw ball	
+	canvasContext.fillStyle = drawColor;
+	canvasContext.beginPath();
+	canvasContext.arc(centerX,centerY,radius,0,2*Math.Pi);
+	canvasContext.fill();
+}
+</script>
+</html>
