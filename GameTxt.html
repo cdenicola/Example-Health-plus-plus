@@ -1,4 +1,5 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
+<h1>let's Play </h1>
 <canvas id="gameCanvas" width="800" height="600"></canvas>
 <p id='data'> </p>
 <script>
@@ -41,7 +42,7 @@ window.onload = function() {
 		moveUpdate();
 		drawCanvas();
 	}, 1000/fps);
-	
+
 	canvas.addEventListener('mousemove', function(evt){
 		var mousePos = calculateMousePos(evt);
 		paddle1Y = mousePos.y-(PADDLE_HEIGHT/2);
@@ -50,7 +51,7 @@ window.onload = function() {
 }
 function moveUpdate(){
 	computerMovement();
-	
+
 	//ball X movement
 	ballX += ballVX;
 	if (ballX > canvas.width){
@@ -62,7 +63,7 @@ function moveUpdate(){
 				else if (ballVX < 0){
 				ballVX -=1;
 				}
-				else{ballReset();}			
+				else{ballReset();}
 				if (ballVY > 0){
 				ballVY +=1;
 				}
@@ -111,7 +112,7 @@ function drawCanvas(){
 	colorRect(canvas.width-PADDLE_THICK,paddle2Y,PADDLE_THICK,PADDLE_HEIGHT,'white');
 	colorRect(ballX,ballY,10,10,'white');
 	colorCircle(ballX,ballY,10,'white'); //circle ball won't work :<\
-	canvasContext.fillText(score1,100,100);	
+	canvasContext.fillText(score1,100,100);
 	canvasContext.fillText(score2,canvas.width-100,100);
 }
 function ballReset(num){
@@ -133,12 +134,12 @@ function ballReset(num){
 	if (num == 1){score2++;}
 	else if (num == 2){score1++;}
 	if (score1>=7){ //add win conditions later
-		
+
 	}
 	if (score2>7){
-		
+
 	}
-} 
+}
 function computerMovement(){
 	if(paddle2Y+(PADDLE_HEIGHT/2) < ballY){
 		paddle2Y += botPaddleSpeed;
@@ -160,7 +161,7 @@ function colorRect(leftX,topY,width,height,drawColor){
 	canvasContext.fillRect(leftX,topY,width,height);
 }
 function colorCircle(centerX, centerY, radius, drawColor){ //won't work, fix l8r
-	//draw ball	
+	//draw ball
 	canvasContext.fillStyle = drawColor;
 	canvasContext.beginPath();
 	canvasContext.arc(centerX,centerY,radius,0,2*Math.Pi);
